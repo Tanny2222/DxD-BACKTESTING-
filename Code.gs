@@ -96,7 +96,6 @@ function getAllTrades() {
   const sheet   = getSheet();
   const lastRow = sheet.getLastRow();
 
-  // มีแค่ header หรือว่างเปล่า
   if (lastRow <= 1) return [];
 
   const rows = sheet.getRange(2, 1, lastRow - 1, HEADERS.length).getValues();
@@ -105,13 +104,21 @@ function getAllTrades() {
     .filter(function(row) { return row[0] !== '' && row[0] !== null; })
     .map(function(row) {
       var obj = {};
-      HEADERS.forEach(function(h, i) { obj[h] = row[i]; });
+      HEADERS.forEach(function(h, i) {
+        // datetime column — ถ้า Sheets คืนมาเป็น Date object ให้แปลงเป็น "YYYY-MM-DDTHH:mm"
+        if (h === 'datetime' && row[i] instanceof Date) {
+          var d = row[i];
+          var pad = function(n) { return String(n).padStart(2, '0'); };
+          obj[h] = d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate())
+                 + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+        } else {
+          obj[h] = row[i];
+        }
+      });
 
-      // Parse JSON arrays
       try { obj.beforeUrls = JSON.parse(obj.beforeUrls || '[]'); } catch(e) { obj.beforeUrls = []; }
       try { obj.afterUrls  = JSON.parse(obj.afterUrls  || '[]'); } catch(e) { obj.afterUrls  = []; }
 
-      // Cast numbers
       obj.id    = Number(obj.id);
       obj.entry = Number(obj.entry);
       obj.stop  = Number(obj.stop);

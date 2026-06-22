@@ -205,8 +205,7 @@
   .stats-group { margin-bottom: 14px; display: flex; flex-direction: column; gap: 8px; }
   .stats-row { display: grid; gap: 8px; }
   .stats-row.row1 { grid-template-columns: repeat(3,1fr); }
-  .stats-row.row2 { grid-template-columns: repeat(3,1fr); }
-  .stats-row.row3 { grid-template-columns: repeat(3,1fr); }
+  .stats-row.row2 { grid-template-columns: repeat(2,1fr); }
   .stat-box {
     background: var(--surface); border: 1px solid var(--border);
     border-radius: var(--radius-sm); padding: 10px 12px; text-align: center;
@@ -534,6 +533,17 @@
           <div class="stat-label">Total R:R</div>
         </div>
       </div>
+      <div class="stats-row row2">
+        <div class="stat-box wins">
+          <div class="stat-val" id="statConWin">—</div>
+          <div class="stat-label">Con Win</div>
+        </div>
+        <div class="stat-box loses">
+          <div class="stat-val" id="statConLoss">—</div>
+          <div class="stat-label">Con Loss</div>
+        </div>
+        <div class="stat-box" style="display:none;"></div>
+      </div>
     </div>
     <!-- hidden stat elements kept for JS compat -->
     <span id="statWins" style="display:none"></span>
@@ -541,8 +551,6 @@
     <span id="statAvgRR" style="display:none"></span>
     <span id="statMinRR" style="display:none"></span>
     <span id="statMaxRR" style="display:none"></span>
-    <span id="statConWin" style="display:none"></span>
-    <span id="statConLoss" style="display:none"></span>
 
     <div class="table-card">
       <div id="emptyState" class="empty-state">
@@ -1106,7 +1114,18 @@ function renderTrades() {
   document.getElementById('statConLoss').textContent  = trades.length ? maxConLoss : '—';
 }
 
-function formatDT(dt) { return dt ? dt.replace('T', ' ') : '—'; }
+function formatDT(dt) {
+  if (!dt) return '—';
+  // ถ้าเป็น ISO format จาก Google Sheets เช่น "2026-06-22T09:12:00.000Z"
+  if (typeof dt === 'string' && dt.includes('T')) {
+    // แปลงเป็น local time แล้ว format เป็น YYYY-MM-DD HH:mm
+    const d = new Date(dt);
+    const pad = n => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }
+  // format ปกติ "2026-06-22T16:12" จาก datetime-local input
+  return dt.replace('T', ' ').slice(0, 16);
+}
 
 // ============================
 // DELETE TRADE
