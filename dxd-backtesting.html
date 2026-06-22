@@ -663,11 +663,6 @@
         <button class="btn-secondary" onclick="testApiConnection()" style="flex:1;">Test Connection</button>
         <button class="btn-primary"   onclick="saveApiConfig()"    style="flex:1;">Save & Connect →</button>
       </div>
-      <div style="margin-top:16px;padding:12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);">
-        <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">Apps Script (Code.gs)</div>
-        <pre id="appsScriptSnippet" style="font-size:10px;color:var(--text-muted);overflow-x:auto;white-space:pre;margin:0;line-height:1.5;"></pre>
-        <button onclick="copyAppsScript()" style="margin-top:8px;font-size:11px;background:var(--surface);border:1px solid var(--border-light);color:var(--text-muted);padding:4px 10px;border-radius:4px;cursor:pointer;">Copy Code</button>
-      </div>
     </div>
   </div>
 </div>
@@ -809,8 +804,6 @@ async function init() {
   addUrl('before');
   addUrl('after');
   tickClock();
-  document.getElementById('appsScriptSnippet').textContent = APPS_SCRIPT_CODE;
-
   if (API_URL) {
     setSyncStatus('syncing');
     setLoading(true, 'Loading trades from Google Sheets…');
